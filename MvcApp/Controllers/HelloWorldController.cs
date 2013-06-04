@@ -8,16 +8,10 @@ namespace MvcApp.Controllers
 {
     public class HelloWorldController : Controller
     {
-        //
-        // GET: /HelloWorld/
 		public ActionResult Index()
 		{
 			return View();
 		}
-
-		// 
-		// GET: /HelloWorld/Welcome/ 
-
 		public ActionResult Welcome(string name, int numTimes = 1)
 		{
 			ViewBag.Message = "Hello " + name;
@@ -25,6 +19,5 @@ namespace MvcApp.Controllers
 
 			return View();
 		}
-
     }
 }
