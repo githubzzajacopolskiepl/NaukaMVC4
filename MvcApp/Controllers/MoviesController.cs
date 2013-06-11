@@ -9,115 +9,143 @@ using MvcApp.Models;
 
 namespace MvcApp.Controllers
 {
-    public class MoviesController : Controller
-    {
-        private MovieDBContext db = new MovieDBContext();
+	public class MoviesController : Controller
+	{
+		private MovieDBContext db = new MovieDBContext();
 
-        //
-        // GET: /Movies/
+		//
+		// GET: /Movies/
 
-        public ActionResult Index()
-        {
-            return View(db.Movies.ToList());
-        }
+		public ActionResult Index()
+		{
+			return View(db.Movies.ToList());
+		}
 
-        //
-        // GET: /Movies/Details/5
+		//	add by zedo --- part: Examining the Edit Methods and Edit View
+		public ActionResult SearchIndex(string movieGenre, string searchString)
+		{
+			var GenreLst = new List<string>();
 
-        public ActionResult Details(int id = 0)
-        {
-            Movie movie = db.Movies.Find(id);
-            if (movie == null)
-            {
-                return HttpNotFound();
-            }
-            return View(movie);
-        }
+			var GenreQry = from d in db.Movies
+						   orderby d.Genre
+						   select d.Genre;
+			GenreLst.AddRange(GenreQry.Distinct());
+			ViewBag.movieGenre = new SelectList(GenreLst);
 
-        //
-        // GET: /Movies/Create
+			var movies = from m in db.Movies
+						 select m;
 
-        public ActionResult Create()
-        {
-            return View();
-        }
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				movies = movies.Where(s => s.Title.Contains(searchString));
+			}
 
-        //
-        // POST: /Movies/Create
+			if (string.IsNullOrEmpty(movieGenre))
+				return View(movies);
+			else
+			{
+				return View(movies.Where(x => x.Genre == movieGenre));
+			}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Movie movie)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Movies.Add(movie);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+		}
 
-            return View(movie);
-        }
+		//
+		// GET: /Movies/Details/5
 
-        //
-        // GET: /Movies/Edit/5
+		public ActionResult Details(int id = 0)
+		{
+			Movie movie = db.Movies.Find(id);
+			if (movie == null)
+			{
+				return HttpNotFound();
+			}
+			return View(movie);
+		}
 
-        public ActionResult Edit(int id = 0)
-        {
-            Movie movie = db.Movies.Find(id);
-            if (movie == null)
-            {
-                return HttpNotFound();
-            }
-            return View(movie);
-        }
+		//
+		// GET: /Movies/Create
 
-        //
-        // POST: /Movies/Edit/5
+		public ActionResult Create()
+		{
+			return View();
+		}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Movie movie)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(movie).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(movie);
-        }
+		//
+		// POST: /Movies/Create
 
-        //
-        // GET: /Movies/Delete/5
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult Create(Movie movie)
+		{
+			if (ModelState.IsValid)
+			{
+				db.Movies.Add(movie);
+				db.SaveChanges();
+				return RedirectToAction("Index");
+			}
 
-        public ActionResult Delete(int id = 0)
-        {
-            Movie movie = db.Movies.Find(id);
-            if (movie == null)
-            {
-                return HttpNotFound();
-            }
-            return View(movie);
-        }
+			return View(movie);
+		}
 
-        //
-        // POST: /Movies/Delete/5
+		//
+		// GET: /Movies/Edit/5
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Movie movie = db.Movies.Find(id);
-            db.Movies.Remove(movie);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+		public ActionResult Edit(int id = 0)
+		{
+			Movie movie = db.Movies.Find(id);
+			if (movie == null)
+			{
+				return HttpNotFound();
+			}
+			return View(movie);
+		}
 
-        protected override void Dispose(bool disposing)
-        {
-            db.Dispose();
-            base.Dispose(disposing);
-        }
-    }
+		//
+		// POST: /Movies/Edit/5
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult Edit(Movie movie)
+		{
+			if (ModelState.IsValid)
+			{
+				db.Entry(movie).State = EntityState.Modified;
+				db.SaveChanges();
+				return RedirectToAction("Index");
+			}
+			return View(movie);
+		}
+
+		//
+		// GET: /Movies/Delete/5
+
+		public ActionResult Delete(int id = 0)
+		{
+			Movie movie = db.Movies.Find(id);
+			if (movie == null)
+			{
+				return HttpNotFound();
+			}
+			return View(movie);
+		}
+
+		//
+		// POST: /Movies/Delete/5
+
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public ActionResult DeleteConfirmed(int id)
+		{
+			Movie movie = db.Movies.Find(id);
+			db.Movies.Remove(movie);
+			db.SaveChanges();
+			return RedirectToAction("Index");
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			db.Dispose();
+			base.Dispose(disposing);
+		}
+	}
 }
