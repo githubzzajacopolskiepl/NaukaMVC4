@@ -45,7 +45,13 @@
             @Html.EditorFor(model => model.Price)
             @Html.ValidationMessageFor(model => model.Price)
         </div>
-
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Rating)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Rating)
+            @Html.ValidationMessageFor(model => model.Rating)
+        </div>
         <p>
             <input type="submit" value="Create" />
         </p>
@@ -66,7 +72,7 @@
                 !isNaN(Globalize.parseFloat(value));
         }
         $(document).ready(function () {
-            Globalize.culture('fr-FR');
+            Globalize.culture('pl-PL');
         });
     </script>
     <script>
@@ -81,3 +87,4 @@
 
     </script>
 }
+
